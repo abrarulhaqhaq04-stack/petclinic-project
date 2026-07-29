@@ -37,8 +37,7 @@ template {
   display: none;
 }
 a {
-  background-color: black
-  ;
+  background-color: blue;
 }
 a:active,
 a:hover {
