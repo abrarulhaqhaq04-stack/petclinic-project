@@ -23,7 +23,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'tomcat',
+                    credentialsId: 'eed2b10a-9343-4bbf-97da-d03e1542b9b8',
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
@@ -31,7 +31,7 @@ pipeline {
                     bat'''
                     curl -u $USER:$PASS \
                     --upload-file target/petclinic.war \
-                    "http://localhost:8089/manager/text/deploy?path=/petclinic&update=true"
+                    "http://localhost:8081/manager/text/deploy?path=/petclinic&update=true"
                     '''
                 }
             }
