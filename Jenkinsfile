@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                bat 'mvn clean package -DskipTests'
             }
         }
 
@@ -28,7 +28,7 @@ pipeline {
                     passwordVariable: 'PASS'
                 )]) {
 
-                    sh '''
+                    bat'''
                     curl -u $USER:$PASS \
                     --upload-file target/petclinic.war \
                     "http://localhost:8089/manager/text/deploy?path=/petclinic&update=true"
