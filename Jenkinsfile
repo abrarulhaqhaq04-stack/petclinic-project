@@ -1,22 +1,45 @@
-pipeline {
+https://github.com/abrarulhaqhaq04-stack/petclinic-project.git
+
+    pipeline {
     agent any
+
+    environment {
+        EC2_USER = "ubuntu"
+        EC2_HOST = "YOUR_EC2_PUBLIC_IP"
+        APP_NAME = "sample.war"
+    }
 
     stages {
 
-        stage('Deploy to AWS') {
+        stage('Checkout') {
             steps {
-                sshagent(credentials: ['ec2']) {
-                    sh """
-                    scp -o StrictHostKeyChecking=no target/app.war ubuntu@16.16.205.18:/tmp/
+                git branch: 'main',
+                url: 'https://github.com/abrarulhaqhaq04-stack/petclinic-project.git'
+            }
+        }
 
-                    ssh -o StrictHostKeyChecking=no ubuntu@16.16.205.18'
-                    sudo cp /tmp/app.war /var/lib/tomcat10/webapps/
-                    sudo systemctl restart tomcat10
-                    '
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sshagent(credentials: ['aws-ssh-key']) {
+
+                    sh """
+                    scp -o StrictHostKeyChecking=no \
+                    target/${APP_NAME} \
+                    ${EC2_USER}@${EC2_HOST}:/tmp/
+
+                    ssh -o StrictHostKeyChecking=no \
+                    ${EC2_USER}@${EC2_HOST} \
+                    'sudo cp /tmp/${APP_NAME} /var/lib/tomcat10/webapps/
+                     sudo systemctl restart tomcat10'
                     """
                 }
             }
         }
-
     }
 }
