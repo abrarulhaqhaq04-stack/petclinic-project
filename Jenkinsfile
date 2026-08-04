@@ -4,9 +4,9 @@ https://github.com/abrarulhaqhaq04-stack/petclinic-project.git
     agent any
 
     environment {
-        EC2_USER = "ubuntu"
-        EC2_HOST = "YOUR_EC2_PUBLIC_IP"
-        APP_NAME = "sample.war"
+        EC2_USER = 'ubuntu'
+        EC2_HOST = '16.16.205.18'
+        APP_NAME = 'petclinic.war'
     }
 
     stages {
@@ -21,21 +21,22 @@ https://github.com/abrarulhaqhaq04-stack/petclinic-project.git
         stage('Build') {
             steps {
                 sh 'mvn clean package'
+                sh 'cp target/*.war target/$'petclinic.war''
             }
         }
 
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['aws-ssh-key']) {
+                sshagent(credentials: ['ec2']) {
 
                     sh """
                     scp -o StrictHostKeyChecking=no \
-                    target/${APP_NAME} \
-                    ${EC2_USER}@${EC2_HOST}:/tmp/
+                    target/$'petclinic.war' \
+                    $'ubuntu@$'16.16.205.18':/tmp/
 
                     ssh -o StrictHostKeyChecking=no \
-                    ${EC2_USER}@${EC2_HOST} \
-                    'sudo cp /tmp/${APP_NAME} /var/lib/tomcat10/webapps/
+                    $ubuntu@$ \
+                    'sudo cp /tmp/$'petclinic.war' /var/lib/tomcat10/webapps/
                      sudo systemctl restart tomcat10'
                     """
                 }
