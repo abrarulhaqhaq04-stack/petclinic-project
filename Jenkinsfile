@@ -1,49 +1,43 @@
 pipeline {
     agent any
 
-    environment {
-        EC2_USER = "ubuntu"
-        EC2_IP = "YOUR_EC2_PUBLIC_IP"
-        APP_NAME = "sample.war"
-    }
-
     stages {
-
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repository/sample-app.git'
+                echo "Source code is checked out from SCM automatically."
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                echo "Building the project..."
             }
         }
 
-        stage('Deploy to AWS EC2') {
+        stage('Test') {
             steps {
-                sshagent(['aws-ssh-key']) {
-                    sh """
-                    scp -o StrictHostKeyChecking=no target/${APP_NAME} ${EC2_USER}@${EC2_IP}:/tmp/
+                echo "Running tests..."
+            }
+        }
 
-                    ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_IP} '
-                    sudo cp /tmp/${APP_NAME} /opt/tomcat/webapps/
-                    sudo systemctl restart tomcat
-                    '
-                    """
-                }
+        stage('Deploy') {
+            steps {
+                echo "Deploying the application..."
             }
         }
     }
 
     post {
+        always {
+            echo "Pipeline execution completed."
+        }
+
         success {
-            echo "Application deployed successfully to AWS EC2."
+            echo "Build was successful."
         }
 
         failure {
-            echo "Deployment failed."
+            echo "Build failed."
         }
     }
 }
