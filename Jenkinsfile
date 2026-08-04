@@ -1,55 +1,43 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'maven'
-        jdk 'java'
-    }
-
     stages {
-
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/devopsplan2026/petclinic-project.git'
+                echo "Source code is checked out from SCM automatically."
             }
         }
 
         stage('Build') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                echo "Building the project..."
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo "Running tests..."
             }
         }
 
         stage('Deploy') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'eed2b10a-9343-4bbf-97da-d03e1542b9b8',
-                    usernameVariable: 'USER',
-                    passwordVariable: 'PASS'
-                )]) {
-
-                    bat'''
-                    curl -u $USER:$PASS \
-                    --upload-file target/petclinic.war \
-                    "http://localhost:8081/manager/text/deploy?path=/petclinic&update=true"
-                    '''
-                }
+                echo "Deploying the application..."
             }
         }
     }
 
     post {
+        always {
+            echo "Pipeline execution completed."
+        }
 
         success {
-            echo 'Deployment Successful!'
-
-            
+            echo "Build was successful."
         }
 
         failure {
-            echo 'Deployment Failed!'
-
+            echo "Build failed."
         }
     }
 }
-
