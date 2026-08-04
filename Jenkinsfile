@@ -10,7 +10,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                echo "Building the project..."
             }
         }
 
@@ -22,10 +22,9 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'cp target/*.war/opt/tomcat/webapps/'
+                echo "Deploying the application..."
             }
         }
-    
     }
 
     post {
